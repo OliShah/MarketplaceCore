@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "marketplacecore"
+version = "0.1.0"
+description = "A brief description of your package"
+authors = ["OliShah"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://yourprojecthomepage.com"
+repository = "https://github.com/OliShah/MarketplaceCore.git"
+keywords = ["marketplace", "seller", "service"]
+packages = [{ include = "seller_core", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pydantic = "^2.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
