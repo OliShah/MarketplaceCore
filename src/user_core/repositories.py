@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
+# Abstract repository contracts used by service-layer business logic.
 
 class BaseRepository(ABC):
     @abstractmethod

@@ -3,6 +3,8 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
+# Shared domain models used by repositories and services.
+
 
 class seller(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))

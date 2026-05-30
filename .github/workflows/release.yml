@@ -5,24 +5,55 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Get version from pyproject.toml
+      - name: Read version from pyproject.toml
         id: version
         run: |
-          VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "//' | sed 's/".*//')
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          python - <<'PY'
+          import pathlib
+          import re
 
-      - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          text = pathlib.Path('pyproject.toml').read_text(encoding='utf-8')
+          match = re.search(r'^version\s*=\s*"([^"]+)"', text, re.MULTILINE)
+          if not match:
+              raise SystemExit('Could not find version in pyproject.toml')
+
+          version = match.group(1)
+          with open(pathlib.Path(__import__('os').environ['GITHUB_OUTPUT']), 'a', encoding='utf-8') as f:
+              f.write(f'version={version}\n')
+          print(f'Version: {version}')
+          PY
+
+      - name: Determine release metadata
+        id: release_meta
+        run: |
+          VERSION='${{ steps.version.outputs.version }}'
+
+          # Treat common development/pre-release markers as prereleases.
+          # Examples: 1.2.0a1, 1.2.0b1, 1.2.0rc1, 1.2.0-dev.1, 1.2.0-alpha.1
+          if echo "$VERSION" | grep -Eiq '(^|[.\-+_])(a|b|rc|alpha|beta|pre|preview|dev)([.\-+_0-9]|$)|[0-9](a|b|rc)[0-9]'; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "make_latest=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "make_latest=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create or update GitHub release
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: v${{ steps.version.outputs.VERSION }}
-          release_name: Release v${{ steps.version.outputs.VERSION }}
-          draft: false
-          prerelease: false
+          tag: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          allowUpdates: true
+          generateReleaseNotes: true
+          prerelease: ${{ steps.release_meta.outputs.prerelease }}
+          makeLatest: ${{ steps.release_meta.outputs.make_latest }}
