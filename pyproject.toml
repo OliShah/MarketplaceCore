@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "marketplacecore"
-version = "0.1.0"
+version = "0.1.1-rcl"
 description = "A brief description of your package"
 authors = ["OliShah"]
 license = "MIT"
