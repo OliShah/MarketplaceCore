@@ -1,3 +1,5 @@
+# Defines schema for sellers table in the database using SQLAlchemy ORM.
+
 from sqlalchemy import Float, String, Text
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
