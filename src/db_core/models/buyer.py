@@ -1,7 +1,7 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from db_core.models import Base
+from db_core.models.base import Base
 
 class BuyerORM(Base):
     __tablename__ = "buyers"

@@ -2,7 +2,7 @@ from sqlalchemy import Float, String, Text
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
 
-from db_core.models import Base
+from db_core.models.base import Base
 
 class SellerORM(Base):
     __tablename__ = "sellers"

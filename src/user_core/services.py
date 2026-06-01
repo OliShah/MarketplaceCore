@@ -1,5 +1,5 @@
 from user_core.models import buyer
-from user_core.repositories import CustomerEmailLookupRepository
+from db_core.repos.base import CustomerEmailLookupRepository
 
 
 async def create_customer_if_email_available(
